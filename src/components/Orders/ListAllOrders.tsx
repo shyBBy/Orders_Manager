@@ -23,24 +23,7 @@ export const ListAllOrders = () => {
     const [ordersList, setOrdersList] = useState<any>([])
 
     useEffect(() => {
-        (async () => {
-            const username = 'c0'
-            const password = 'cs_4'
-            const token = encode(`${username}:${password}`);
-
-
-            const res = await fetch('https://bigsewciu.shop/wp-json/wc/v3/orders/1271', {
-                credentials: 'include',
-                headers: {
-                    Authorization: `Basic ${token}`,
-                },
-            });
-            const data = await res.json()
-            const orders = data.orders || [];
-            setOrdersList(orders)
-
-
-        })();
+      fetchOrderList();
     }, []);
 
 
@@ -49,10 +32,10 @@ export const ListAllOrders = () => {
             <Box style={styles.container}>
                 <Text style={styles.text}>Lista wszystkich zamówień bigsewciu.shop</Text>
                 {
-                    console.log(ordersList.id)
-                    // ordersList.map((order: any) => (
-                    //     <Text>Order id: {order.id}</Text>
-                    // ))
+                orders.map((order) => (
+                  <SingleOrder key={order.id} order={order} />
+                  ))
+                  
                 }
             </Box>
         </>
