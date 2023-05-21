@@ -23,13 +23,14 @@ export const ListAllOrders = () => {
     const [ordersList, setOrdersList] = useState<any>([])
 
     useEffect(() => {
-        try {
-            const response = await fetch('https://example.com/wp-json/wc/v3/orders', {
+       (async () => {
+          try {
+            const response = await fetch('https://bigsewciu.shop/wp-json/wc/v3/orders', {
               headers: {
                 Authorization: 'Basic ' + btoa('YOUR_USERNAME' + ':' + 'YOUR_PASSWORD'),
               },
             });
-          
+         
             if (response.ok) {
               const data = await response.json();
               setOrdersList(data);
@@ -39,7 +40,17 @@ export const ListAllOrders = () => {
           } catch (error) {
             console.error('Error fetching orders:', error);
           }
+       })();
     }, []);
+    
+    if (ordersList === null) {
+        return (
+            <Box style={styles.container}>
+                <ActivityIndicator size="large" color={theme.colors.primary}/>
+                <Text style={styles.text}>Trwa wczytywanie zamówień...</Text>
+            </Box>
+        )
+    }
 
 
     return (
