@@ -2,8 +2,8 @@ import React, {useEffect, useState} from "react";
 import {StyleSheet, Text, View} from 'react-native';
 import {theme} from "../../../theme";
 import {Box} from "native-base";
-import Constants from 'expo-constants';
-import { encode } from "base-64";
+import { SingleOrder } from "./SingleOrder";
+
 
 const styles = StyleSheet.create({
     container: {
@@ -23,7 +23,22 @@ export const ListAllOrders = () => {
     const [ordersList, setOrdersList] = useState<any>([])
 
     useEffect(() => {
-      fetchOrderList();
+        try {
+            const response = await fetch('https://example.com/wp-json/wc/v3/orders', {
+              headers: {
+                Authorization: 'Basic ' + btoa('YOUR_USERNAME' + ':' + 'YOUR_PASSWORD'),
+              },
+            });
+          
+            if (response.ok) {
+              const data = await response.json();
+              setOrdersList(data);
+            } else {
+              console.error('Error fetching orders:', response.status);
+            }
+          } catch (error) {
+            console.error('Error fetching orders:', error);
+          }
     }, []);
 
 
