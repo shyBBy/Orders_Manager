@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "orders_manager_fe",
+    "name": "OrdersManager",
     "slug": "orders_manager_fe",
     "version": "1.0.0",
     "orientation": "portrait",
