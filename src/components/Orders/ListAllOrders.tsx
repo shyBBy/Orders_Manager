@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
-import {StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text} from 'react-native';
 import {theme} from "../../../theme";
 import {Box} from "native-base";
-import Constants from 'expo-constants';
-import { encode } from "base-64";
+import axios from 'axios';
+import { encode } from 'base-64';
+import {SingleOrder} from "./SingleOrder";
 
 const styles = StyleSheet.create({
     container: {
@@ -20,40 +21,44 @@ const styles = StyleSheet.create({
 });
 
 export const ListAllOrders = () => {
-    const [ordersList, setOrdersList] = useState<any>([])
+    const [ordersList, setOrdersList] = useState<typeof SingleOrder[]>([]);
 
     useEffect(() => {
-        (async () => {
-            const username = 'c0'
-            const password = 'cs_4'
-            const token = encode(`${username}:${password}`);
+        const fetchOrders = async () => {
+            const consumerKey = 'ck_cc38ea7bfa45cea69b9eec348601489cf4453a50';
+            const consumerSecret = 'cs_a55248f3381b7fa0a7d5cca3d955963d5179c184';
+            const apiUrl = 'https://bigsewciu.shop/wp-json/wc/v3/orders';
+            const auth = encode(`${consumerKey}:${consumerSecret}`);
+
+            const headers = {
+                'Content-Type': 'application/json',
+                Authorization: `Basic ${auth}`,
+            };
 
 
-            const res = await fetch('https://bigsewciu.shop/wp-json/wc/v3/orders/1271', {
-                credentials: 'include',
-                headers: {
-                    Authorization: `Basic ${token}`,
-                },
-            });
-            const data = await res.json()
-            const orders = data.orders || [];
-            setOrdersList(orders)
+            try {
+                const response = await axios.get(apiUrl, { headers });
+                const orders = response.data || [];
+                setOrdersList(orders);
+            } catch (error) {
+                console.log('Wystąpił błąd podczas pobierania zamówień.', error);
+            }
+        };
 
-
-        })();
+        fetchOrders();
     }, []);
 
 
     return (
         <>
-            <Box style={styles.container}>
-                <Text style={styles.text}>Lista wszystkich zamówień bigsewciu.shop</Text>
-                {
-                    console.log(ordersList.id)
-                    // ordersList.map((order: any) => (
-                    //     <Text>Order id: {order.id}</Text>
-                    // ))
-                }
+            <Box>
+                <ScrollView>
+                    {
+                        ordersList.map((order: any) => (
+                            <SingleOrder key={order.id} order={order} />
+                        ))
+                    }
+                </ScrollView>
             </Box>
         </>
     );
