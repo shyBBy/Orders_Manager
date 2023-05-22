@@ -3,6 +3,10 @@ import {StyleSheet, Text, View} from 'react-native';
 import {theme} from "../../../theme";
 import {Box} from "native-base";
 import { SingleOrder } from "./SingleOrder";
+import {ActivityIndicator} from 'react-native-paper';
+import { encode as btoa} from 'base-64'
+import axios from "axios";
+// import { WooCommerce } from "../../api/api";
 
 
 const styles = StyleSheet.create({
@@ -23,24 +27,37 @@ export const ListAllOrders = () => {
     const [ordersList, setOrdersList] = useState<any>([])
 
     useEffect(() => {
-       (async () => {
-          try {
-            const response = await fetch('https://bigsewciu.shop/wp-json/wc/v3/orders', {
-              headers: {
-                Authorization: 'Basic ' + btoa('YOUR_USERNAME' + ':' + 'YOUR_PASSWORD'),
-              },
-            });
-         
-            if (response.ok) {
-              const data = await response.json();
-              setOrdersList(data);
-            } else {
-              console.error('Error fetching orders:', response.status);
-            }
-          } catch (error) {
-            console.error('Error fetching orders:', error);
-          }
-       })();
+       const fetchData = async () => {
+        try {
+          const consumerKey = 'ck_cc38ea7bfa45cea69b9eec348601489cf4453a50'
+          const consumerSecret = 'cs_a55248f3381b7fa0a7d5cca3d955963d5179c184'
+
+          const encodedConsumerKey = btoa(consumerKey)
+          const encodedConsumerSecret = btoa(consumerSecret)
+
+          const credentials = `${encodedConsumerKey}:${encodedConsumerSecret}`
+          const base64Credentials = btoa(`${consumerKey}:${consumerSecret}`);
+          
+          const config = {
+            headers: {
+              Authorization: `Basic ${base64Credentials}`,
+            },
+          };
+
+          const url = 'https://bigsewciu.shop/wp-json/wc/v3/orders'
+
+          const res = await axios.get(url, config)
+          // const res = await WooCommerce.get('orders');
+          const data = res.data
+
+        
+          setOrdersList(data)
+        } catch (e) {
+          console.log(e)
+        }
+       };
+
+       fetchData();
     }, []);
     
     if (ordersList === null) {
@@ -58,7 +75,7 @@ export const ListAllOrders = () => {
             <Box style={styles.container}>
                 <Text style={styles.text}>Lista wszystkich zamówień bigsewciu.shop</Text>
                 {
-                orders.map((order) => (
+                ordersList.map((order: any) => (
                   <SingleOrder key={order.id} order={order} />
                   ))
                   
