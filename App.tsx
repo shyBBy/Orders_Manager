@@ -12,13 +12,11 @@ const Tab = createBottomTabNavigator();
 
 
 export default function App() {
-    const [isLoading, setIsLoading] = useState(true);
-    const [fontLoaded, setFontLoaded] = useState(false);
+   const [fontLoaded, setFontLoaded] = useState(false);
 
+  const {user} = useAuth()
+  
     useEffect(() => {
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 3000);
         const loadFonts = async () => {
             await Font.loadAsync({
                 'roboto-light': require('./assets/fonts/Roboto-Light.ttf'),
@@ -35,19 +33,11 @@ export default function App() {
         return null;
     }
 
-    if (isLoading) {
-        return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color={theme.colors.primary}/>
-            </View>
-        );
-
-    }
-
+   
     return (
-        <NativeBaseProvider>
-            <AppNavigation/>
-        </NativeBaseProvider>
-    );
+      <>
+        {user ? <AuthenticatedApp /> : <UnAuthenticatedApp /> }
+      </>
+      )
 }
 
