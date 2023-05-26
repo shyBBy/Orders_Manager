@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import { Center, Box, Heading, VStack, FormControl, Input, Link, Button, HStack, Text, useToast } from 'native-base';
 
-const LoginForm: React.FC = () => {
-  const [username, setUsername] = useState('');
+export const LoginForm: React.FC = () => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const toast = useToast();
 
   const handleLogin = async () => {
     // Walidacja danych
-    if (username === '' || password === '') {
+    if (email === '' || password === '') {
       toast.show({
         title: 'Błąd logowania',
         description: 'Proszę wprowadzić login i hasło.',
-        status: 'warning',
+        variant: 'warning',
         duration: 3000,
       });
       return;
@@ -21,12 +21,12 @@ const LoginForm: React.FC = () => {
 
     try {
       // Wysłanie danych logowania
-      const response = await fetch('https://example.com/api/login', {
+      const response = await fetch('http://localhost:3002/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
@@ -34,19 +34,19 @@ const LoginForm: React.FC = () => {
         toast.show({
           title: 'Sukces',
           description: 'Zalogowano pomyślnie.',
-          status: 'success',
+          variant: 'success',
           duration: 3000,
         });
 
         // Wyczyść pola formularza
-        setUsername('');
+        setEmail('');
         setPassword('');
       } else {
         // Błąd logowania
         toast.show({
           title: 'Błąd logowania',
           description: 'Błędny adres e-mail lub hasło.',
-          status: 'error',
+          variant: 'error',
           duration: 3000,
         });
       }
@@ -56,7 +56,7 @@ const LoginForm: React.FC = () => {
       toast.show({
         title: 'Błąd sieciowy',
         description: 'Wystąpił błąd sieciowy. Spróbuj ponownie.',
-        status: 'error',
+        variant: 'error',
         duration: 3000,
       });
     }
@@ -76,11 +76,10 @@ const LoginForm: React.FC = () => {
         <FormControl>
           <FormControl.Label>Login</FormControl.Label>
           <Input
-            value={username}
-            onChangeText={setUsername}
+            value={email}
+            onChangeText={setEmail}
             autoCapitalize="none"
             autoCorrect={false}
-            keyboardType="text"
           />
         </FormControl>
         <FormControl>

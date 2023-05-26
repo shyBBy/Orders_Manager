@@ -1,20 +1,21 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { ToastAndroid } from "react-native";
-import { config } from "../config/config";
-import { setIfErrMsg } from "../helpers/setIfErrMsg";
-import { LoggedUserRes, Login } from "../interfaces/auth.interfaces";
+
+import {Login, UserRes} from "../interfaces/auth.interfaces";
+import {setIfErrMsg} from "../helpers/setIfErrMsg";
+import {config} from "../config/config";
 
 interface AuthContextType {
-  user: LoggedUserRes | null;
-  setUser: React.Dispatch<React.SetStateAction<LoggedUserRes | null>>;
+  user: UserRes | null;
+  setUser: React.Dispatch<React.SetStateAction<UserRes | null>>;
   signIn: (data: Login) => Promise<any>;
   signOut: () => void;
 }
 
-const AuthContext = createContext<AuthContextType>(null!);
+export const AuthContext = createContext<AuthContextType>(null!);
 
-export const AuthProvider: React.FC = ({ children }) => {
-  const [user, setUser] = useState<LoggedUserRes | null>(null);
+export const AuthProvider = ({children}: {children: JSX.Element}) => {
+  const [user, setUser] = useState<UserRes | null>(null);
 
   const signOut = async () => {
     try {
@@ -67,9 +68,9 @@ export const AuthProvider: React.FC = ({ children }) => {
         setUser(null);
         return;
       }
-      const userData = (await res.json()) as LoggedUserRes;
+      const userData = (await res.json()) as UserRes;
       setUser(userData);
-      ToastAndroid.show(`Pomyślnie zalogowano, witaj ${userData.name}`, ToastAndroid.LONG);
+      ToastAndroid.show(`Pomyślnie zalogowano, witaj ${userData.email}`, ToastAndroid.LONG);
     } catch (error) {
       ToastAndroid.show("Coś poszło nie tak, spróbuj raz jeszcze.", ToastAndroid.LONG);
       setUser(null);

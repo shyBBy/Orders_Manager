@@ -1,11 +1,12 @@
 import React from "react";
-import {View} from "native-base";
+import {Text, View} from "native-base";
+import {LoginForm} from "../components/forms/LoginForm";
 
 
 export const LoginScreen = () => {
     return(
-        <View>
-
+        <View style={{paddingTop: '45%'}}>
+            <LoginForm/>
         </View>
     )
 }
